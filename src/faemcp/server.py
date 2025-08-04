@@ -33,7 +33,7 @@ async def start_template(ctx: Context) -> str:  # type: ignore
 
 
 @mcp.prompt(title="Start template")
-async def start() -> str:  # type: ignore
+async def start(ctx: Context) -> str:  # type: ignore
     """Generate a start prompt using the template."""
     # Use the tool internally - it handles the elicitation
-    return await start_template()
+    return await start_template(ctx)
