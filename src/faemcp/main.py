@@ -7,6 +7,16 @@ from pydantic import Field
 mcp = FastMCP(name="faemcp")
 
 
+def parse_template_variables(template_content: str) -> List[Tuple[str, str]]:
+    """Parse template variables from {{variable:description}} format.
+
+    Returns list of (variable_name, description) tuples.
+    """
+    pattern = r"\{\{([^:}]+):([^}]+)\}\}"
+    matches = re.findall(pattern, template_content, re.DOTALL)
+    return [(var.strip(), desc.strip()) for var, desc in matches]
+
+
 def load_template() -> tuple[str, Dict[str, str]]:
     """Load template content and field descriptions from the template file."""
     template_path = Path("prompts/start-prompt.md")
@@ -26,16 +36,6 @@ def load_template() -> tuple[str, Dict[str, str]]:
 
 # Load template and descriptions at module level
 _template_content, _template_descriptions = load_template()
-
-
-def parse_template_variables(template_content: str) -> List[Tuple[str, str]]:
-    """Parse template variables from {{variable:description}} format.
-
-    Returns list of (variable_name, description) tuples.
-    """
-    pattern = r"\{\{([^:}]+):([^}]+)\}\}"
-    matches = re.findall(pattern, template_content, re.DOTALL)
-    return [(var.strip(), desc.strip()) for var, desc in matches]
 
 
 def replace_template_variables(template_content: str, variables: Dict[str, str]) -> str:
@@ -63,5 +63,10 @@ def start(
     return replace_template_variables(_template_content, user_vars)
 
 
-if __name__ == "__main__":
+def main():
+    """Entry point for the faemcp command."""
     mcp.run()
+
+
+if __name__ == "__main__":
+    main()
