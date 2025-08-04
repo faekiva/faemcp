@@ -1,6 +1,7 @@
 import re
 from pathlib import Path
 from typing import Dict, List, Tuple
+from importlib import resources
 from mcp.server.fastmcp import FastMCP
 from pydantic import Field
 
@@ -19,16 +20,16 @@ def parse_template_variables(template_content: str) -> List[Tuple[str, str]]:
 
 def load_template() -> tuple[str, Dict[str, str]]:
     """Load template content and field descriptions from the template file."""
-    template_path = Path("prompts/start-prompt.md")
+    try:
+        # Use importlib.resources to access package data
+        template_content = resources.files("faemcp").joinpath("prompts/start-prompt.md").read_text(encoding="utf-8")
+    except FileNotFoundError:
+        raise FileNotFoundError("Template file not found: prompts/start-prompt.md")
 
-    if not template_path.exists():
-        raise FileNotFoundError(f"Template file not found: {template_path}")
-
-    template_content = template_path.read_text(encoding="utf-8")
     template_vars = parse_template_variables(template_content)
 
     if not template_vars:
-        raise ValueError(f"No template variables found in {template_path}")
+        raise ValueError("No template variables found in prompts/start-prompt.md")
 
     descriptions = {var: desc for var, desc in template_vars}
     return template_content, descriptions
