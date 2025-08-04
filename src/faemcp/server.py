@@ -1,5 +1,5 @@
 from mcp.server.fastmcp import FastMCP
-
+from mcp.server.fastmcp.prompts import base
 from .template_processing import (
     load_template,
     replace_template_variables,
@@ -33,14 +33,17 @@ def start_template(context: str, goals: str, query: str) -> str:
 
 
 @mcp.prompt(title="Start template")
-async def start() -> str:  # type: ignore
+async def start() -> list[base.Message]:  # type: ignore
     """Generate a start prompt using the template."""
-    return """I need to collect some information from you to generate your customized start prompt. Please answer these questions:
+    return [
+        base.UserMessage(
+            """
+            Please ask me the following questions, and do not think about the answers. Once I answer them, use them to call the start_template tool.
+            1. **Context**: What context should the model have to help you do the right thing?
 
-1. **Context**: What context should the model have to help you do the right thing?
+            2. **Goals**: What goals do you want the model to keep in mind? Prioritize them.
 
-2. **Goals**: What goals do you want the model to keep in mind? Prioritize them.
-
-3. **Query**: What's the first thing you're asking of it?
-
-Please provide your answers, and I'll use them with the start_template tool to generate your start prompt."""
+            3. **Query**: What's the first thing you're asking of it?
+            """
+        )
+    ]
