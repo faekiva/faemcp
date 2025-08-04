@@ -130,15 +130,16 @@ def generate_error_html(error: Exception, error_type: str, traceback_str: str) -
 </body>
 </html>
     """
-    
+
     import datetime
+
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
+
     return html_template.format(
         error_type=error_type,
         error_message=str(error),
         traceback_formatted=traceback_str,
-        timestamp=timestamp
+        timestamp=timestamp,
     )
 
 
@@ -146,23 +147,25 @@ def open_error_webpage(error: Exception, error_type: str = None):
     """Generate and open an error webpage in the default browser."""
     if error_type is None:
         error_type = type(error).__name__
-    
+
     # Get the full traceback
     traceback_str = traceback.format_exc()
-    
+
     # Generate HTML content
     html_content = generate_error_html(error, error_type, traceback_str)
-    
+
     # Create temporary HTML file
     try:
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".html", delete=False, encoding="utf-8"
+        ) as f:
             f.write(html_content)
             temp_file_path = f.name
-        
+
         # Open in default browser
-        webbrowser.open(f'file://{temp_file_path}')
+        webbrowser.open(f"file://{temp_file_path}")
         print(f"Error webpage opened at: file://{temp_file_path}", file=sys.stderr)
-        
+
     except Exception as webpage_error:
         print(f"Failed to open error webpage: {webpage_error}", file=sys.stderr)
         print(f"Original error: {error}", file=sys.stderr)
@@ -182,7 +185,11 @@ def load_template() -> tuple[str, Dict[str, str]]:
     """Load template content and field descriptions from the template file."""
     try:
         # Use importlib.resources to access package data
-        template_content = resources.files("faemcp").joinpath("prompts/start-prompt.md").read_text(encoding="utf-8")
+        template_content = (
+            resources.files("faemcp")
+            .joinpath("prompts/start-prompt.md")
+            .read_text(encoding="utf-8")
+        )
     except FileNotFoundError as e:
         error = FileNotFoundError("Template file not found: prompts/start-prompt.md")
         open_error_webpage(error, "Template File Missing")

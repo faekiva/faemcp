@@ -4,6 +4,8 @@ MCP server that provides template-based prompts with variable substitution.
 
 ## Quick Start
 
+[Install uv](https://docs.astral.sh/uv/getting-started/installation/) if you haven't already.
+
 Run directly from GitHub using uvx:
 
 ```bash
@@ -15,8 +17,8 @@ uvx --from git+https://github.com/faekiva/faemcp faemcp
 Add this MCP server to your Claude Code configuration:
 
 ```bash
-# Add to Claude Code MCP servers
-claude mcp add faemcp "uvx --from git+https://github.com/faekiva/faemcp faemcp"
+# Recommended: Using uvx (requires uv to be installed)
+claude mcp add faemcp -- uvx --from git+https://github.com/faekiva/faemcp faemcp
 ```
 
 ## Usage
