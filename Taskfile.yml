@@ -1,0 +1,35 @@
+version: '3'
+
+tasks:
+  resume:
+    desc: Resume the most recent Claude Code session
+    cmds:
+      - claude --resume
+
+  dev:
+    desc: Run the MCP server in development mode
+    cmds:
+      - uv run python main.py
+
+  install:
+    desc: Install dependencies using uv
+    cmds:
+      - uv sync
+
+  lint:
+    desc: Run linting and type checking
+    cmds:
+      - uv run ruff check .
+      - uv run mypy . --ignore-missing-imports
+
+  format:
+    desc: Format code with ruff
+    cmds:
+      - uv run ruff format .
+
+  clean:
+    desc: Clean up temporary files and caches
+    cmds:
+      - rm -rf .ruff_cache/
+      - rm -rf __pycache__/
+      - find . -name "*.pyc" -delete
