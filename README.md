@@ -7,7 +7,7 @@ MCP server that provides template-based prompts with variable substitution.
 Run directly from GitHub using uvx:
 
 ```bash
-uvx --from git+https://github.com/yourusername/faemcp faemcp
+uvx --from git+https://github.com/faekiva/faemcp faemcp
 ```
 
 ## Adding to Claude Code
@@ -16,7 +16,7 @@ Add this MCP server to your Claude Code configuration:
 
 ```bash
 # Add to Claude Code MCP servers
-claude mcp add faemcp "uvx --from git+https://github.com/yourusername/faemcp faemcp"
+claude mcp add faemcp "uvx --from git+https://github.com/faekiva/faemcp faemcp"
 ```
 
 ## Usage
