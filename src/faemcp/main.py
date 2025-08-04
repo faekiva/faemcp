@@ -227,9 +227,9 @@ def replace_template_variables(template_content: str, variables: Dict[str, str])
 
 @mcp.prompt(title="Start template")
 def start(
-    context: str = Field(description=_template_descriptions["context"]),
-    goals: str = Field(description=_template_descriptions["goals"]),
-    query: str = Field(description=_template_descriptions["query"]),
+    context: str = Field(description="What context should the model have to help you do the right thing?"),
+    goals: str = Field(description="What goals do you want the model to keep in mind? Prioritize them"),
+    query: str = Field(description="What's the first thing you're asking of it?"),
 ) -> str:
     """Fill the start-prompt.md template with user-provided variables."""
 
