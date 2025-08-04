@@ -1,7 +1,6 @@
-from mcp.server.fastmcp import FastMCP, Context
+from mcp.server.fastmcp import FastMCP
 
 from .template_processing import (
-    TemplateParameters,
     load_template,
     replace_template_variables,
 )
@@ -14,31 +13,30 @@ print(f"Starting {get_version_info()}")
 
 
 @mcp.tool()
-async def start_template(ctx: Context) -> str:  # type: ignore
-    """Fill the start-prompt.md template with user-provided variables."""
+def start_template(context: str, goals: str, query: str) -> str:
+    """Fill the start-prompt.md template with user-provided variables.
 
+    Args:
+        context: What context should the model have to help you do the right thing?
+        goals: What goals do you want the model to keep in mind? Prioritize them
+        query: What's the first thing you're asking of it?
+    """
     template_content, _ = load_template()
 
-    # Elicit template parameters from the user
-    result = await ctx.elicit(
-        message="Please provide the template parameters to generate your start prompt:",
-        schema=TemplateParameters,
-    )
+    user_vars = {
+        "context": context,
+        "goals": goals,
+        "query": query,
+    }
 
-    if result.action == "accept" and result.data:
-        user_vars = {
-            "context": result.data.context,
-            "goals": result.data.goals,
-            "query": result.data.query,
-        }
-        return replace_template_variables(template_content, user_vars)
-    else:
-        return "Template generation cancelled by user."
+    return replace_template_variables(template_content, user_vars)
 
 
 @mcp.prompt(title="Start template")
 async def start() -> str:  # type: ignore
     """Generate a start prompt using the template."""
-    return (
-        "Please run the start_template tool to generate your customized start prompt."
-    )
+    return """Ask the following questions of the user. Once the user answers them, use them to call the start_template tool.
+
+- **context**: What context should the model have to help you do the right thing?
+- **goals**: What goals do you want the model to keep in mind? Prioritize them
+- **query**: What's the first thing you're asking of it?"""
