@@ -20,7 +20,7 @@ tasks:
     desc: Run linting and type checking
     cmds:
       - uv run ruff check .
-      - uv run mypy . --ignore-missing-imports
+      - uv run mypy . --ignore-missing-imports --exclude build/
 
   format:
     desc: Format code with ruff

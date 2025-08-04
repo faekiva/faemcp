@@ -1,4 +1,5 @@
 from mcp.server.fastmcp import FastMCP, Context
+import asyncio
 
 from .template_processing import (
     TemplateParameters,
@@ -33,7 +34,7 @@ async def start_template(ctx: Context) -> str:  # type: ignore
 
 
 @mcp.prompt(title="Start template")
-async def start(ctx: Context) -> str:  # type: ignore
+def start(ctx: Context) -> str:  # type: ignore
     """Generate a start prompt using the template."""
     # Use the tool internally - it handles the elicitation
-    return await start_template(ctx)
+    return asyncio.run(start_template(ctx))
