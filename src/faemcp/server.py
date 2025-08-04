@@ -6,8 +6,12 @@ from .template_processing import (
     load_template,
     replace_template_variables,
 )
+from .version_info import get_version_info
 
 mcp = FastMCP(name="faemcp")
+
+# Log version information on startup
+print(f"Starting {get_version_info()}")
 
 
 @mcp.tool()
