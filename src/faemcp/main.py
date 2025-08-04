@@ -6,10 +6,18 @@ import webbrowser
 from pathlib import Path
 from typing import Dict, List, Tuple
 from importlib import resources
-from mcp.server.fastmcp import FastMCP
-from pydantic import Field
+from mcp.server.fastmcp import FastMCP, Context
+from pydantic import BaseModel, Field
 
 mcp = FastMCP(name="faemcp")
+
+
+class TemplateParameters(BaseModel):
+    """Schema for collecting template parameters."""
+    
+    context: str = Field(description="What context should the model have to help you do the right thing?")
+    goals: str = Field(description="What goals do you want the model to keep in mind? Prioritize them")  
+    query: str = Field(description="What's the first thing you're asking of it?")
 
 
 def generate_error_html(error: Exception, error_type: str, traceback_str: str) -> str:
@@ -226,15 +234,31 @@ def replace_template_variables(template_content: str, variables: Dict[str, str])
 
 
 @mcp.tool()
-def start_template(
-    context: str = Field(description="What context should the model have to help you do the right thing?"),
-    goals: str = Field(description="What goals do you want the model to keep in mind? Prioritize them"),
-    query: str = Field(description="What's the first thing you're asking of it?"),
-) -> str:
+async def start_template(ctx: Context) -> str:
     """Fill the start-prompt.md template with user-provided variables."""
+    
+    # Elicit template parameters from the user
+    result = await ctx.elicit(
+        message="Please provide the template parameters to generate your start prompt:",
+        schema=TemplateParameters,
+    )
+    
+    if result.action == "accept" and result.data:
+        user_vars = {
+            "context": result.data.context,
+            "goals": result.data.goals, 
+            "query": result.data.query
+        }
+        return replace_template_variables(_template_content, user_vars)
+    else:
+        return "Template generation cancelled by user."
 
-    user_vars = {"context": context, "goals": goals, "query": query}
-    return replace_template_variables(_template_content, user_vars)
+
+@mcp.prompt(title="Start template")
+async def start(ctx: Context) -> str:
+    """Generate a start prompt using the template."""
+    # Use the tool internally - it handles the elicitation
+    return await start_template(ctx)
 
 
 def main():
