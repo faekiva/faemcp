@@ -225,8 +225,8 @@ def replace_template_variables(template_content: str, variables: Dict[str, str])
     return re.sub(pattern, replacer, template_content, flags=re.DOTALL)
 
 
-@mcp.prompt(title="Start template")
-def start(
+@mcp.tool()
+def start_template(
     context: str = Field(description="What context should the model have to help you do the right thing?"),
     goals: str = Field(description="What goals do you want the model to keep in mind? Prioritize them"),
     query: str = Field(description="What's the first thing you're asking of it?"),
